@@ -1,0 +1,102 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'war'
+
+
+task copyLibs(type: Copy) {
+	into "build/deps"
+	from configurations.runtime
+}
+
+// See http://gradle.org/docs/current/userguide/war_plugin.html
+//   Section 26.5. Convention properties
+webAppDirName = 'WebContent'
+
+// See http://gradle.org/docs/current/userguide/java_plugin.html
+//   Section 23.4.1. Changing the project layout
+sourceSets {
+	main {
+		// where does the Java source code live?
+		java {
+			srcDir 'src'
+		}
+		groovy {
+			srcDir 'src'
+		}
+
+		// where do classpath resources like *.properties files live?
+		resources {
+			srcDir 'src'
+			exclude '**/*.groovy'
+			exclude '**/*.java'
+		}
+	}
+}
+repositories {
+	flatDir { dirs "lib" }
+	mavenCentral()
+}
+// See http://gradle.org/docs/current/userguide/dependency_management.html
+//   Section 51.4.4. File dependencies
+dependencies {
+	// 
+	providedCompile 'javax.servlet:javax.servlet-api:3.+'
+
+	
+	// Groovy
+	compile 'org.codehaus.groovy:groovy-all:+'
+	
+	// logging library
+	compile 'ch.qos.logback:logback-classic:+' 
+	
+	// Hibernate, Connection Pooler and Hibernate Search and MySQL Connector
+	compile 'javax.transaction:jta:1.1'
+	compile 'org.hibernate:hibernate-core:+'
+	compile 'org.hibernate:hibernate-search-orm:+'
+	compile 'org.apache.lucene:lucene-analyzers-common:+'
+	compile 'org.apache.lucene:lucene-queryparser:+'
+	compile 'org.hibernate:hibernate-hikaricp:+'
+	compile 'org.hibernate:hibernate-c3p0:+'
+	compile 'mysql:mysql-connector-java:+' // mysql connector
+	
+	// Caching
+	compile 'net.sf.ehcache:ehcache:+'
+	
+	// sheduling
+	compile 'org.quartz-scheduler:quartz:+'
+	
+	// Security Framework
+	compile 'org.apache.shiro:shiro-core:+'
+	compile 'org.apache.shiro:shiro-web:+'
+	compile 'org.apache.shiro:shiro-ehcache:+'
+	compile 'org.owasp.esapi:esapi:+'
+	
+	// HTTPBuilder
+	compile 'org.codehaus.groovy.modules.http-builder:http-builder:+'
+	
+	// Apache commons stuff: Mailer, Fileupload
+	compile 'org.apache.commons:commons-email:+'
+	compile 'commons-fileupload:commons-fileupload:+'
+	compile 'commons-validator:commons-validator:+'
+	
+	// Yaml, SASS, Image filters, Saxon-HE
+	compile 'io.bit3:jsass:4.0.1'
+	compile 'org.jyaml:jyaml:+'
+	compile 'com.jhlabs:filters:+'
+	compile 'org.jsoup:jsoup:+'
+	compile 'net.sf.saxon:Saxon-HE:+'
+
+	// compile 'commons-collections:commons-collections:+'
+	// compile 'org.springframework:spring-webmvc:+'
+	
+	compile fileTree(dir: "${webAppDirName}/WEB-INF/lib", include: '*.jar')
+}
+
+war {
+	
+}
+
+
+
+
